@@ -14,23 +14,25 @@ callback as the last argument of your async function.
 
 ### Quick Examples
 
-    async.map(['file1','file2','file3'], fs.stat, function(err, results){
-        // results is now an array of stats for each file
-    });
+```javascript
+async.map(['file1','file2','file3'], fs.stat, function(err, results){
+    // results is now an array of stats for each file
+});
 
-    async.filter(['file1','file2','file3'], path.exists, function(results){
-        // results now equals an array of the existing files
-    });
+async.filter(['file1','file2','file3'], path.exists, function(results){
+    // results now equals an array of the existing files
+});
 
-    async.parallel([
-        function(){ ... },
-        function(){ ... }
-    ], callback);
+async.parallel([
+    function(){ ... },
+    function(){ ... }
+], callback);
 
-    async.series([
-        function(){ ... },
-        function(){ ... }
-    ]);
+async.series([
+    function(){ ... },
+    function(){ ... }
+]);
+```
 
 There are many more functions available so take a look at the docs below for a
 full list. This module aims to be comprehensive, so if you feel anything is
@@ -52,42 +54,41 @@ async.map(data, asyncProcess, function (err, results) {
 
 #### Collections
 
-* [forEach](#forEach)
-* [map](#map)
-* [filter](#filter)
-* [reject](#reject)
-* [reduce](#reduce)
-* [detect](#detect)
-* [sortBy](#sortBy)
-* [some](#some)
-* [every](#every)
-* [concat](#concat)
+* forEach
+* map
+* filter
+* reject
+* reduce
+* detect
+* sortBy
+* some
+* every
+* concat
 
 #### Control Flow
 
-* [series](#series)
-* [parallel](#parallel)
-* [whilst](#whilst)
-* [until](#until)
-* [waterfall](#waterfall)
-* [queue](#queue)
-* [auto](#auto)
-* [iterator](#iterator)
-* [apply](#apply)
-* [nextTick](#nextTick)
+* series
+* parallel
+* whilst
+* until
+* waterfall
+* queue
+* auto
+* iterator
+* apply
+* nextTick
 
 #### Utils
 
-* [memoize](#memoize)
-* [unmemoize](#unmemoize)
-* [log](#log)
-* [dir](#dir)
-* [noConflict](#noConflict)
+* memoize
+* unmemoize
+* log
+* dir
+* noConflict
 
 
 ### Collections
 
-<a name="forEach" />
 #### forEach(arr, iterator, callback)
 
 Applies an iterator function to each item in an array, in parallel.
@@ -108,16 +109,17 @@ __Arguments__
 
 __Example__
 
-    // assuming openFiles is an array of file names and saveFile is a function
-    // to save the modified contents of that file:
+```javascript
+// assuming openFiles is an array of file names and saveFile is a function
+// to save the modified contents of that file:
 
-    async.forEach(openFiles, saveFile, function(err){
-        // if any of the saves produced an error, err would equal that error
-    });
+async.forEach(openFiles, saveFile, function(err){
+    // if any of the saves produced an error, err would equal that error
+});
+```
 
 ---------------------------------------
 
-<a name="forEachSeries" />
 #### forEachSeries(arr, iterator, callback)
 
 The same as forEach only the iterator is applied to each item in the array in
@@ -127,7 +129,6 @@ processing. This means the iterator functions will complete in order.
 
 ---------------------------------------
 
-<a name="forEachLimit" />
 #### forEachLimit(arr, limit, iterator, callback)
 
 The same as forEach only the iterator is applied to batches of items in the
@@ -145,15 +146,17 @@ __Arguments__
 
 __Example__
 
-    // Assume documents is an array of JSON objects and requestApi is a
-    // function that interacts with a rate-limited REST api.
+```javascript
+// Assume documents is an array of JSON objects and requestApi is a
+// function that interacts with a rate-limited REST api.
 
-    async.forEachLimit(documents, 20, requestApi, function(err){
-        // if any of the saves produced an error, err would equal that error
-    });
+async.forEachLimit(documents, 20, requestApi, function(err){
+    // if any of the saves produced an error, err would equal that error
+});
+```
+
 ---------------------------------------
 
-<a name="map" />
 #### map(arr, iterator, callback)
 
 Produces a new array of values by mapping each value in the given array through
@@ -179,13 +182,14 @@ __Arguments__
 
 __Example__
 
-    async.map(['file1','file2','file3'], fs.stat, function(err, results){
-        // results is now an array of stats for each file
-    });
+```javascript
+async.map(['file1','file2','file3'], fs.stat, function(err, results){
+    // results is now an array of stats for each file
+});
+```
 
 ---------------------------------------
 
-<a name="mapSeries" />
 #### mapSeries(arr, iterator, callback)
 
 The same as map only the iterator is applied to each item in the array in
@@ -195,7 +199,6 @@ processing. The results array will be in the same order as the original.
 
 ---------------------------------------
 
-<a name="filter" />
 #### filter(arr, iterator, callback)
 
 __Alias:__ select
@@ -217,13 +220,14 @@ __Arguments__
 
 __Example__
 
-    async.filter(['file1','file2','file3'], path.exists, function(results){
-        // results now equals an array of the existing files
-    });
+```javascript
+async.filter(['file1','file2','file3'], path.exists, function(results){
+    // results now equals an array of the existing files
+});
+```
 
 ---------------------------------------
 
-<a name="filterSeries" />
 #### filterSeries(arr, iterator, callback)
 
 __alias:__ selectSeries
@@ -234,14 +238,12 @@ processing. The results array will be in the same order as the original.
 
 ---------------------------------------
 
-<a name="reject" />
 #### reject(arr, iterator, callback)
 
 The opposite of filter. Removes values that pass an async truth test.
 
 ---------------------------------------
 
-<a name="rejectSeries" />
 #### rejectSeries(arr, iterator, callback)
 
 The same as filter, only the iterator is applied to each item in the array
@@ -250,7 +252,6 @@ in series.
 
 ---------------------------------------
 
-<a name="reduce" />
 #### reduce(arr, memo, iterator, callback)
 
 __aliases:__ inject, foldl
@@ -278,18 +279,19 @@ __Arguments__
 
 __Example__
 
-    async.reduce([1,2,3], 0, function(memo, item, callback){
-        // pointless async:
-        process.nextTick(function(){
-            callback(null, memo + item)
-        });
-    }, function(err, result){
-        // result is now equal to the last value of memo, which is 6
+```javascript
+async.reduce([1,2,3], 0, function(memo, item, callback){
+    // pointless async:
+    process.nextTick(function(){
+        callback(null, memo + item)
     });
+}, function(err, result){
+    // result is now equal to the last value of memo, which is 6
+});
+```
 
 ---------------------------------------
 
-<a name="reduceRight" />
 #### reduceRight(arr, memo, iterator, callback)
 
 __Alias:__ foldr
@@ -299,7 +301,6 @@ Same as reduce, only operates on the items in the array in reverse order.
 
 ---------------------------------------
 
-<a name="detect" />
 #### detect(arr, iterator, callback)
 
 Returns the first value in a list that passes an async truth test. The
@@ -321,13 +322,14 @@ __Arguments__
 
 __Example__
 
-    async.detect(['file1','file2','file3'], path.exists, function(result){
-        // result now equals the first file in the list that exists
-    });
+```javascript
+async.detect(['file1','file2','file3'], path.exists, function(result){
+    // result now equals the first file in the list that exists
+});
+```
 
 ---------------------------------------
 
-<a name="detectSeries" />
 #### detectSeries(arr, iterator, callback)
 
 The same as detect, only the iterator is applied to each item in the array
@@ -337,7 +339,6 @@ terms of array order) that passes the truth test.
 
 ---------------------------------------
 
-<a name="sortBy" />
 #### sortBy(arr, iterator, callback)
 
 Sorts a list by the results of running each value through an async iterator.
@@ -354,19 +355,19 @@ __Arguments__
 
 __Example__
 
-    async.sortBy(['file1','file2','file3'], function(file, callback){
-        fs.stat(file, function(err, stats){
-            callback(err, stats.mtime);
-        });
-    }, function(err, results){
-        // results is now the original array of files sorted by
-        // modified date
+```javascript
+async.sortBy(['file1','file2','file3'], function(file, callback){
+    fs.stat(file, function(err, stats){
+        callback(err, stats.mtime);
     });
-
+}, function(err, results){
+    // results is now the original array of files sorted by
+    // modified date
+});
+```
 
 ---------------------------------------
 
-<a name="some" />
 #### some(arr, iterator, callback)
 
 __Alias:__ any
@@ -388,13 +389,14 @@ __Arguments__
 
 __Example__
 
-    async.some(['file1','file2','file3'], path.exists, function(result){
-        // if result is true then at least one of the files exists
-    });
+```javascript
+async.some(['file1','file2','file3'], path.exists, function(result){
+    // if result is true then at least one of the files exists
+});
+```
 
 ---------------------------------------
 
-<a name="every" />
 #### every(arr, iterator, callback)
 
 __Alias:__ all
@@ -415,13 +417,14 @@ __Arguments__
 
 __Example__
 
-    async.every(['file1','file2','file3'], path.exists, function(result){
-        // if result is true then every file exists
-    });
+```javascript
+async.every(['file1','file2','file3'], path.exists, function(result){
+    // if result is true then every file exists
+});
+```
 
 ---------------------------------------
 
-<a name="concat" />
 #### concat(arr, iterator, callback)
 
 Applies an iterator to each item in a list, concatenating the results. Returns the
@@ -441,13 +444,14 @@ __Arguments__
 
 __Example__
 
-    async.concat(['dir1','dir2','dir3'], fs.readdir, function(err, files){
-        // files is now a list of filenames that exist in the 3 directories
-    });
+```javascript
+async.concat(['dir1','dir2','dir3'], fs.readdir, function(err, files){
+    // files is now a list of filenames that exist in the 3 directories
+});
+```
 
 ---------------------------------------
 
-<a name="concatSeries" />
 #### concatSeries(arr, iterator, callback)
 
 Same as async.concat, but executes in series instead of parallel.
@@ -455,7 +459,6 @@ Same as async.concat, but executes in series instead of parallel.
 
 ### Control Flow
 
-<a name="series" />
 #### series(tasks, [callback])
 
 Run an array of functions in series, each one running once the previous
@@ -480,43 +483,43 @@ __Arguments__
 
 __Example__
 
-    async.series([
-        function(callback){
-            // do some stuff ...
-            callback(null, 'one');
-        },
-        function(callback){
-            // do some more stuff ...
-            callback(null, 'two');
-        },
-    ],
-    // optional callback
-    function(err, results){
-        // results is now equal to ['one', 'two']
-    });
-
-
-    // an example using an object instead of an array
-    async.series({
-        one: function(callback){
-            setTimeout(function(){
-                callback(null, 1);
-            }, 200);
-        },
-        two: function(callback){
-            setTimeout(function(){
-                callback(null, 2);
-            }, 100);
-        },
+```javascript
+async.series([
+    function(callback){
+        // do some stuff ...
+        callback(null, 'one');
     },
-    function(err, results) {
-        // results is now equal to: {one: 1, two: 2}
-    });
+    function(callback){
+        // do some more stuff ...
+        callback(null, 'two');
+    },
+],
+// optional callback
+function(err, results){
+    // results is now equal to ['one', 'two']
+});
 
+
+// an example using an object instead of an array
+async.series({
+    one: function(callback){
+        setTimeout(function(){
+            callback(null, 1);
+        }, 200);
+    },
+    two: function(callback){
+        setTimeout(function(){
+            callback(null, 2);
+        }, 100);
+    },
+},
+function(err, results) {
+    // results is now equal to: {one: 1, two: 2}
+});
+```
 
 ---------------------------------------
 
-<a name="parallel" />
 #### parallel(tasks, [callback])
 
 Run an array of functions in parallel, without waiting until the previous
@@ -541,47 +544,47 @@ __Arguments__
 
 __Example__
 
-    async.parallel([
-        function(callback){
-            setTimeout(function(){
-                callback(null, 'one');
-            }, 200);
-        },
-        function(callback){
-            setTimeout(function(){
-                callback(null, 'two');
-            }, 100);
-        },
-    ],
-    // optional callback
-    function(err, results){
-        // in this case, the results array will equal ['two','one']
-        // because the functions were run in parallel and the second
-        // function had a shorter timeout before calling the callback.
-    });
-
-
-    // an example using an object instead of an array
-    async.parallel({
-        one: function(callback){
-            setTimeout(function(){
-                callback(null, 1);
-            }, 200);
-        },
-        two: function(callback){
-            setTimeout(function(){
-                callback(null, 2);
-            }, 100);
-        },
+```javascript
+async.parallel([
+    function(callback){
+        setTimeout(function(){
+            callback(null, 'one');
+        }, 200);
     },
-    function(err, results) {
-        // results is now equals to: {one: 1, two: 2}
-    });
+    function(callback){
+        setTimeout(function(){
+            callback(null, 'two');
+        }, 100);
+    },
+],
+// optional callback
+function(err, results){
+    // in this case, the results array will equal ['two','one']
+    // because the functions were run in parallel and the second
+    // function had a shorter timeout before calling the callback.
+});
 
+
+// an example using an object instead of an array
+async.parallel({
+    one: function(callback){
+        setTimeout(function(){
+            callback(null, 1);
+        }, 200);
+    },
+    two: function(callback){
+        setTimeout(function(){
+            callback(null, 2);
+        }, 100);
+    },
+},
+function(err, results) {
+    // results is now equals to: {one: 1, two: 2}
+});
+```
 
 ---------------------------------------
 
-<a name="whilst" />
 #### whilst(test, fn, callback)
 
 Repeatedly call fn, while test returns true. Calls the callback when stopped,
@@ -598,23 +601,23 @@ __Arguments__
 
 __Example__
 
-    var count = 0;
+```javascript
+var count = 0;
 
-    async.whilst(
-        function () { return count < 5; },
-        function (callback) {
-            count++;
-            setTimeout(callback, 1000);
-        },
-        function (err) {
-            // 5 seconds have passed
-        }
-    });
-
+async.whilst(
+    function () { return count < 5; },
+    function (callback) {
+        count++;
+        setTimeout(callback, 1000);
+    },
+    function (err) {
+        // 5 seconds have passed
+    }
+});
+```
 
 ---------------------------------------
 
-<a name="until" />
 #### until(test, fn, callback)
 
 Repeatedly call fn, until test returns true. Calls the callback when stopped,
@@ -625,7 +628,6 @@ The inverse of async.whilst.
 
 ---------------------------------------
 
-<a name="waterfall" />
 #### waterfall(tasks, [callback])
 
 Runs an array of functions in series, each passing their results to the next in
@@ -642,23 +644,23 @@ __Arguments__
 
 __Example__
 
-    async.waterfall([
-        function(callback){
-            callback(null, 'one', 'two');
-        },
-        function(arg1, arg2, callback){
-            callback(null, 'three');
-        },
-        function(arg1, callback){
-            // arg1 now equals 'three'
-            callback(null, 'done');
-        }
-    ]);
-
+```javascript
+async.waterfall([
+    function(callback){
+        callback(null, 'one', 'two');
+    },
+    function(arg1, arg2, callback){
+        callback(null, 'three');
+    },
+    function(arg1, callback){
+        // arg1 now equals 'three'
+        callback(null, 'done');
+    }
+]);
+```
 
 ---------------------------------------
 
-<a name="queue" />
 #### queue(worker, concurrency)
 
 Creates a queue object with the specified concurrency. Tasks added to the
@@ -690,32 +692,32 @@ methods:
 
 __Example__
 
-    // create a queue object with concurrency 2
+```javascript
+// create a queue object with concurrency 2
 
-    var q = async.queue(function (task, callback) {
-        console.log('hello ' + task.name);
-        callback();
-    }, 2);
+var q = async.queue(function (task, callback) {
+    console.log('hello ' + task.name);
+    callback();
+}, 2);
 
 
-    // assign a callback
-    q.drain = function() {
-        console.log('all items have been processed');
-    }
+// assign a callback
+q.drain = function() {
+    console.log('all items have been processed');
+}
 
-    // add some items to the queue
+// add some items to the queue
 
-    q.push({name: 'foo'}, function (err) {
-        console.log('finished processing foo');
-    });
-    q.push({name: 'bar'}, function (err) {
-        console.log('finished processing bar');
-    });
-
+q.push({name: 'foo'}, function (err) {
+    console.log('finished processing foo');
+});
+q.push({name: 'bar'}, function (err) {
+    console.log('finished processing bar');
+});
+```
 
 ---------------------------------------
 
-<a name="auto" />
 #### auto(tasks, [callback])
 
 Determines the best order for running functions based on their requirements.
@@ -737,48 +739,52 @@ __Arguments__
 
 __Example__
 
-    async.auto({
-        get_data: function(callback){
-            // async code to get some data
-        },
-        make_folder: function(callback){
-            // async code to create a directory to store a file in
-            // this is run at the same time as getting the data
-        },
-        write_file: ['get_data', 'make_folder', function(callback){
-            // once there is some data and the directory exists,
-            // write the data to a file in the directory
-            callback(null, filename);
-        }],
-        email_link: ['write_file', function(callback, results){
-            // once the file is written let's email a link to it...
-            // results.write_file contains the filename returned by write_file.
-        }]
-    });
+```javascript
+async.auto({
+    get_data: function(callback){
+        // async code to get some data
+    },
+    make_folder: function(callback){
+        // async code to create a directory to store a file in
+        // this is run at the same time as getting the data
+    },
+    write_file: ['get_data', 'make_folder', function(callback){
+        // once there is some data and the directory exists,
+        // write the data to a file in the directory
+        callback(null, filename);
+    }],
+    email_link: ['write_file', function(callback, results){
+        // once the file is written let's email a link to it...
+        // results.write_file contains the filename returned by write_file.
+    }]
+});
+```
 
 This is a fairly trivial example, but to do this using the basic parallel and
 series functions would look like this:
 
-    async.parallel([
+```javascript
+async.parallel([
+    function(callback){
+        // async code to get some data
+    },
+    function(callback){
+        // async code to create a directory to store a file in
+        // this is run at the same time as getting the data
+    }
+],
+function(results){
+    async.series([
         function(callback){
-            // async code to get some data
+            // once there is some data and the directory exists,
+            // write the data to a file in the directory
         },
-        function(callback){
-            // async code to create a directory to store a file in
-            // this is run at the same time as getting the data
+        email_link: ['write_file', function(callback){
+            // once the file is written let's email a link to it...
         }
-    ],
-    function(results){
-        async.series([
-            function(callback){
-                // once there is some data and the directory exists,
-                // write the data to a file in the directory
-            },
-            email_link: ['write_file', function(callback){
-                // once the file is written let's email a link to it...
-            }
-        ]);
-    });
+    ]);
+});
+```
 
 For a complicated series of async tasks using the auto function makes adding
 new tasks much easier and makes the code more readable. 
@@ -786,7 +792,6 @@ new tasks much easier and makes the code more readable.
 
 ---------------------------------------
 
-<a name="iterator" />
 #### iterator(tasks)
 
 Creates an iterator function which calls the next function in the array,
@@ -819,10 +824,8 @@ __Example__
     node> nextfn();
     'three'
 
-
 ---------------------------------------
 
-<a name="apply" />
 #### apply(function, arguments..)
 
 Creates a continuation function with some arguments already applied, a useful
@@ -838,24 +841,26 @@ __Arguments__
 
 __Example__
 
-    // using apply
+```javascript
+// using apply
 
-    async.parallel([
-        async.apply(fs.writeFile, 'testfile1', 'test1'),
-        async.apply(fs.writeFile, 'testfile2', 'test2'),
-    ]);
+async.parallel([
+    async.apply(fs.writeFile, 'testfile1', 'test1'),
+    async.apply(fs.writeFile, 'testfile2', 'test2'),
+]);
 
 
-    // the same process without using apply
+// the same process without using apply
 
-    async.parallel([
-        function(callback){
-            fs.writeFile('testfile1', 'test1', callback);
-        },
-        function(callback){
-            fs.writeFile('testfile2', 'test2', callback);
-        },
-    ]);
+async.parallel([
+    function(callback){
+        fs.writeFile('testfile1', 'test1', callback);
+    },
+    function(callback){
+        fs.writeFile('testfile2', 'test2', callback);
+    },
+]);
+```
 
 It's possible to pass any number of additional arguments when calling the
 continuation:
@@ -868,7 +873,6 @@ continuation:
 
 ---------------------------------------
 
-<a name="nextTick" />
 #### nextTick(callback)
 
 Calls the callback on a later loop around the event loop. In node.js this just
@@ -883,17 +887,18 @@ __Arguments__
 
 __Example__
 
-    var call_order = [];
-    async.nextTick(function(){
-        call_order.push('two');
-        // call_order now equals ['one','two]
-    });
-    call_order.push('one')
+```javascript
+var call_order = [];
+async.nextTick(function(){
+    call_order.push('two');
+    // call_order now equals ['one','two]
+});
+call_order.push('one')
+```
 
 
 ### Utils
 
-<a name="memoize" />
 #### memoize(fn, [hasher])
 
 Caches the results of an async function. When creating a hash to store function
@@ -909,18 +914,19 @@ __Arguments__
 
 __Example__
 
-    var slow_fn = function (name, callback) {
-        // do something
-        callback(null, result);
-    };
-    var fn = async.memoize(slow_fn);
+```javascript
+var slow_fn = function (name, callback) {
+    // do something
+    callback(null, result);
+};
+var fn = async.memoize(slow_fn);
 
-    // fn can now be used as if it were slow_fn
-    fn('some name', function () {
-        // callback
-    });
+// fn can now be used as if it were slow_fn
+fn('some name', function () {
+    // callback
+});
+```
 
-<a name="unmemoize" />
 #### unmemoize(fn)
 
 Undoes a memoized function, reverting it to the original, unmemoized
@@ -930,7 +936,6 @@ __Arguments__
 
 * fn - the memoized function
 
-<a name="log" />
 #### log(function, arguments)
 
 Logs the result of an async function to the console. Only works in node.js or
@@ -957,7 +962,6 @@ __Example__
 
 ---------------------------------------
 
-<a name="dir" />
 #### dir(function, arguments)
 
 Logs the result of an async function to the console using console.dir to
@@ -985,7 +989,6 @@ __Example__
 
 ---------------------------------------
 
-<a name="noConflict" />
 #### noConflict()
 
 Changes the value of async back to its original value, returning a reference to the
